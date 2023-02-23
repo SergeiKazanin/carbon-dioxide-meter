@@ -49,14 +49,23 @@ void loop()
     myTimer1 = millis();
     pmSerial.listen();
     pmSerial.write(trg, 7);
-    delay(50);
-    aqi.read(&data);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("PM25 ");
-    lcd.print(data.pm25_env);
-    if (maxPm < data.pm25_env)
-      maxPm = data.pm25_env;
+    delay(70);
+    if (aqi.read(&data))
+    {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("PM25 ");
+      lcd.print(data.pm25_env);
+      if (maxPm < data.pm25_env)
+        maxPm = data.pm25_env;
+    }
+    else
+    {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("CRC err");
+    }
+
     lcd.setCursor(9, 0);
     lcd.print(maxPm);
     lcd.setCursor(14, 0);
@@ -65,7 +74,7 @@ void loop()
     lcd.print("CO2 ");
     mySerial.listen();
     mySerial.write(cmd, 9);
-    delay(50);
+    delay(70);
     memset(response, 0, 9);
     mySerial.readBytes(response, 9);
 
